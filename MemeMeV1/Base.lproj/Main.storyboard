@@ -93,13 +93,13 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="BottomToolbar" destination="vtX-17-gP8" id="SK8-KY-XKc"/>
-                        <outlet property="MemeImageView" destination="fTx-nu-ZTL" id="XOH-di-DzF"/>
-                        <outlet property="TopToolBar" destination="Omh-bo-WCh" id="7Oh-rY-ELb"/>
                         <outlet property="bottomTextField" destination="phP-AX-XcT" id="Z31-Al-41G"/>
+                        <outlet property="bottomToolBar" destination="vtX-17-gP8" id="pT7-n7-7lE"/>
                         <outlet property="cameraButton" destination="geO-pU-os6" id="Vvd-xt-Y6w"/>
+                        <outlet property="memeImageView" destination="fTx-nu-ZTL" id="gdq-T4-amR"/>
                         <outlet property="shareButton" destination="6DR-EE-pFm" id="Ygx-B1-jHx"/>
                         <outlet property="topTextField" destination="fw2-vy-j9M" id="INH-mz-KWI"/>
+                        <outlet property="topToolBar" destination="Omh-bo-WCh" id="N2m-5y-caX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
