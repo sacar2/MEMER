@@ -8,14 +8,7 @@
 
 import UIKit
 
-struct Meme{
-    var topText: String = ""
-    var bottomText: String = ""
-    var originalImage: UIImage?
-    var memedImage: UIImage?
-}
-
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class GenerateMemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var memeImageView: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
@@ -37,10 +30,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewWillAppear(animated: Bool) {
         cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
         subscribeToKeyboardNotifications()
+        self.tabBarController?.tabBar.hidden = true
+        self.navigationController?.navigationBar.hidden = true
+        UIApplication.sharedApplication().statusBarHidden = true
     }
     
     override func viewWillDisappear(animated: Bool) {
         unsuscribeFromKeyboardNotifications()
+        self.tabBarController?.tabBar.hidden = false
+        self.navigationController?.navigationBar.hidden = false
+        UIApplication.sharedApplication().statusBarHidden = false
     }
     
     func configureTextField(textField: UITextField){
@@ -75,11 +74,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = sourcetype
+        imagePicker.allowsEditing = true
         self.presentViewController(imagePicker, animated: true, completion: nil)
     }
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+        if let image = info[UIImagePickerControllerEditedImage] as? UIImage {
             memeImageView.image = image
             shareButton.enabled = true
         }
@@ -116,8 +116,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     func subscribeToKeyboardNotifications(){
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.keyboardWillShow(_:)) , name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GenerateMemeViewController.keyboardWillShow(_:)) , name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(GenerateMemeViewController.keyboardWillHide(_:)), name: UIKeyboardWillHideNotification, object: nil)
     }
     
     func unsuscribeFromKeyboardNotifications(){
@@ -163,6 +163,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         activityVC.completionWithItemsHandler = {(activityType, completed:Bool, returnedItems:[AnyObject]?, error: NSError?) in
             if (completed) {
                 self.save(memeImg)
+                self.navigationController?.popToRootViewControllerAnimated(true)
             }else{
                 return
             }
@@ -171,12 +172,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func save(memeImg: UIImage){
         let meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!, originalImage:             memeImageView.image, memedImage: memeImg)
+        let object = UIApplication.sharedApplication().delegate
+        let appDelegate = object as! AppDelegate
+        
+        appDelegate.memes.append(meme)
     }
     
     @IBAction func CancelMeme(sender: AnyObject) {
         memeImageView.image = nil
         resetTextFieldTextsToDefault()
         shareButton.enabled = false
+        self.navigationController?.popToRootViewControllerAnimated(true)
     }
     
     
